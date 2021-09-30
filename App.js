@@ -4,16 +4,19 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
   ScrollView,
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
+import WebViews from './WebViews.js';
 
 const App = () => {
   const [reminder, setReminder] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [note, setNote] = useState('');
+  const [uri, setUri] = useState(false);
 
   const handlePress = val => {
     setSelectedDate(val.dateString);
@@ -42,51 +45,67 @@ const App = () => {
     setShowForm(false);
   };
 
-  return (
-    <View>
-      <View>
-        <Calendar
-          hideExtraDays
-          enableSwipeMonths
-          onDayPress={val => handlePress(val)}
-          // markedDates={{
-          //   '2021-09-16': {selected: true, marked: true, selectedColor: 'blue'},
-          // }}
-        />
-      </View>
+  function clicked() {
+    console.log(uri);
+    setUri(!uri);
+  }
 
-      <View style={{paddingVertical: 10}}>
-        {!showForm ? (
-          <ScrollView>
-            <Text style={styles.reminderHeading}>Reminders</Text>
-            {reminder.length > 0 ? (
-              reminder.map((item, index) => (
-                <Text key={index} style={styles.reminders}>
-                  {item.date} {'  '} {item.note}
-                </Text>
-              ))
-            ) : (
-              <Text style={styles.reminders}>No reminders added</Text>
-            )}
-          </ScrollView>
-        ) : (
-          <View>
-            <Text style={styles.reminderHeading}>Add A Reminder</Text>
-            <Text style={{padding: 10, fontSize: 20}}>{selectedDate}</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={text => setNote(text)}
-              value={note}
-              placeholder="Remind me to..."
-            />
-            <View style={styles.btnContainer}>
-              <Button title="Save" onPress={handleSave} />
-              <Button title="Cancel" onPress={handleCancel} color="red" />
-            </View>
-          </View>
-        )}
+  return (
+    <>
+      <View>
+        <TouchableOpacity style={{margin: 10}} onPress={clicked}>
+          <Text style={{color: 'blue'}}>Open gmail.com</Text>
+        </TouchableOpacity>
       </View>
-    </View>
+      {uri ? (
+        <WebViews />
+      ) : (
+        <View>
+          <View>
+            <Calendar
+              hideExtraDays
+              enableSwipeMonths
+              onDayPress={val => handlePress(val)}
+              // markedDates={{
+              //   '2021-09-16': {selected: true, marked: true, selectedColor: 'blue'},
+              // }}
+            />
+          </View>
+
+          <View style={{paddingVertical: 10}}>
+            {!showForm ? (
+              <ScrollView>
+                <Text style={styles.reminderHeading}>Reminders</Text>
+                {reminder.length > 0 ? (
+                  reminder.map((item, index) => (
+                    <Text key={index} style={styles.reminders}>
+                      {item.date} {'  '} {item.note}
+                    </Text>
+                  ))
+                ) : (
+                  <Text style={styles.reminders}>No reminders added</Text>
+                )}
+              </ScrollView>
+            ) : (
+              <View>
+                <Text style={styles.reminderHeading}>Add A Reminder</Text>
+                <Text style={{padding: 10, fontSize: 20}}>{selectedDate}</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={text => setNote(text)}
+                  value={note}
+                  placeholder="Remind me to..."
+                />
+                <View style={styles.btnContainer}>
+                  <Button title="Save" onPress={handleSave} />
+                  <Button title="Cancel" onPress={handleCancel} color="red" />
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+      )}
+    </>
   );
 };
 
